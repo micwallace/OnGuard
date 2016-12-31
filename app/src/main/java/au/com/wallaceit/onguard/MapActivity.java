@@ -188,13 +188,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             Toast.makeText(this, "Location access is needed to determine your current position", Toast.LENGTH_LONG).show();
         }
-        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        LatLng curLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        LatLng curLocation;
         if (item.getLatitude()==0) {
-            addRadiusMarker(curLocation);
+            Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            curLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
         } else {
-            addRadiusMarker(new LatLng(item.getLatitude(), item.getLongitude()));
+            curLocation = new LatLng(item.getLatitude(), item.getLongitude());
         }
+        addRadiusMarker(curLocation);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLocation, 18));
     }
 

@@ -24,25 +24,28 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.wifi.WifiManager;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import au.com.wallaceit.onguard.GeofenceItem;
+import au.com.wallaceit.onguard.processor.GeofenceActionPlugin;
+
+@GeofenceActionPlugin
 public class Wifi extends GeofenceAction {
 
-    /*public static LinkedHashMap<String, String> getActions(){
+    public static LinkedHashMap<String, String> getActions(){
         LinkedHashMap<String, String> actions = new LinkedHashMap<>();
         actions.put("Wifi::On", "Turn Wifi On");
         actions.put("Wifi::Off", "Turn Wifi Off");
         return actions;
-    }*/
+    }
 
-    public static void On(Context context){
+    public static void On(Context context, GeofenceItem item, boolean in){
         System.out.println("Turning WIFI on!");
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         wifiManager.setWifiEnabled(true);
     }
 
-    public static void Off(Context context){
+    public static void Off(Context context, GeofenceItem item, boolean in){
         System.out.println("Turning WIFI off!");
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         wifiManager.setWifiEnabled(false);

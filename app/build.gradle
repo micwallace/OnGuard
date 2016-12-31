@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 25
@@ -19,6 +20,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.7
+        targetCompatibility = 1.7
+    }
 }
 
 dependencies {
@@ -32,6 +37,15 @@ dependencies {
     compile 'com.android.support:support-v4:25.1.0'
     compile 'com.android.support:support-vector-drawable:25.1.0'
     compile 'com.github.prsidhu:MultiSelectSpinner:master-SNAPSHOT'
-    compile 'org.reflections:reflections:0.9.10'
+
+    compile files('libs/processor.jar')
+
     testCompile 'junit:junit:4.12'
+    //compile project(path: ':processor')
 }
+
+task processorTask(type: Exec) {
+    commandLine 'cp', '../processor/build/libs/processor.jar', 'libs/'
+}
+processorTask.dependsOn(':processor:build')
+preBuild.dependsOn(processorTask)

@@ -70,39 +70,13 @@ public class GeofenceTransitionsService extends IntentService {
 
         GeofenceItem item = ((Onguard) getApplication()).getGeofenceItem(intent.getStringExtra("key"));
         if (item.getState() != event.getGeofenceTransition()) {
-            // Get the transition details as a String.
-            String geofenceTransitionDetails = getGeofenceTransitionDetails(intent, event, item);
 
-            // Send notification and log the transition details.
-            sendNotification(geofenceTransitionDetails);
-
-            Log.i(getPackageName(), geofenceTransitionDetails);
-
-            Set<String> commands = event.getGeofenceTransition() == Geofence.GEOFENCE_TRANSITION_ENTER ? item.getInCommands() : item.getOutCommands();
-            GeofenceAction.performGeofenceCommands(GeofenceTransitionsService.this, commands);
+            Log.i(getPackageName(), (event.getGeofenceTransition()==Geofence.GEOFENCE_TRANSITION_ENTER?"Entered ":"Exited ")+item.getName()+" geofence");
 
             item.setState(event.getGeofenceTransition());
             item.save();
+
+            GeofenceAction.performGeofenceCommands(GeofenceTransitionsService.this, item, event.getGeofenceTransition() == Geofence.GEOFENCE_TRANSITION_ENTER);
         }
     }
-
-    private String getGeofenceTransitionDetails(Intent intent, GeofencingEvent event, GeofenceItem item){
-        if (!intent.hasExtra("key"))
-            return "Could not determine geofence";
-
-        return (event.getGeofenceTransition()==Geofence.GEOFENCE_TRANSITION_ENTER?"Entered ":"Exited ")+item.getName()+" geofence";
-    }
-
-    private void sendNotification(String message){
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_notifications_black_24dp)
-                        .setContentTitle(getString(R.string.app_name))
-                        .setContentText(message);
-
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(0, mBuilder.build());
-    }
-
 }

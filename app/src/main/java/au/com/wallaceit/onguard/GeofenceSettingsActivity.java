@@ -73,10 +73,10 @@ public class GeofenceSettingsActivity extends AppCompatActivity {
         });
 
         actionsMap = GeofenceAction.getActions();
+
         final ArrayList<String> actionKeys = new ArrayList<>(actionsMap.keySet());
         ArrayList<String> actionLabels = new ArrayList<>(actionsMap.values());
         actionLabels.add(0, "None");
-        //ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new ArrayList<>(actions.values()));
 
         final MultiSelectSpinner enter_action = (MultiSelectSpinner) findViewById(R.id.enter_action_spinner);
         enter_action.setItems(actionLabels);
@@ -128,14 +128,14 @@ public class GeofenceSettingsActivity extends AppCompatActivity {
         findViewById(R.id.enter_action_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GeofenceAction.performGeofenceCommands(GeofenceSettingsActivity.this, item.getInCommands());
+                GeofenceAction.performGeofenceCommands(GeofenceSettingsActivity.this, item, true);
             }
         });
 
         findViewById(R.id.exit_action_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GeofenceAction.performGeofenceCommands(GeofenceSettingsActivity.this, item.getOutCommands());
+                GeofenceAction.performGeofenceCommands(GeofenceSettingsActivity.this, item, false);
             }
         });
     }

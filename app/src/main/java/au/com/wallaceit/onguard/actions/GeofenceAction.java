@@ -23,29 +23,60 @@ package au.com.wallaceit.onguard.actions;
 import android.app.Activity;
 import android.content.Context;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
-import java.util.Set;
+
+import au.com.wallaceit.onguard.GeofenceItem;
 
 public abstract class GeofenceAction {
 
-    public static LinkedHashMap<String, String> getActions(){
+    /*public static LinkedHashMap<String, String> getActions(){
         LinkedHashMap<String, String> actions = new LinkedHashMap<>();
         actions.put("Wifi::On", "Turn Wifi On");
         actions.put("Wifi::Off", "Turn Wifi Off");
+
+        actions.put("Notification::Silent", "Notification: Silent");
+        actions.put("Notification::Vibrate", "Notification: Vibrate");
+        actions.put("Notification::Sound", "Notification: Sound");
+        actions.put("Notification::SoundVibrate", "Notification: Sound & Vibrate");
+        return actions;
+    }*/
+
+    private static LinkedHashMap<String, String> actionsList = null;
+
+    public static LinkedHashMap<String, String> getActions(){
+        if (actionsList!=null)
+            return actionsList;
+
+        LinkedHashMap<String, String> actions = new LinkedHashMap<>();
+        Class[] pluginClasses = ActionsList.CLASSES;
+        for (Class pluginClass : pluginClasses){
+            try {
+                Method method = pluginClass.getMethod("getActions");
+                LinkedHashMap<String,String> result = (LinkedHashMap<String, String>) method.invoke(null);
+                if (result!=null)
+                    actions.putAll(result);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("FOUND ACTIONS: "+actions.size());
+        actionsList = actions;
+
         return actions;
     }
 
-    public static void performGeofenceCommands(Context context, Set<String> commands){
-        for (String command : commands) {
+    public static void performGeofenceCommands(Context context, GeofenceItem item, boolean in){
+        for (String command : (in ? item.getInCommands() : item.getOutCommands())) {
             if (command.equals(""))
                 continue;
 
             String[] cmdParts = command.split("::");
             try {
                 Class<?> actionClass = Class.forName("au.com.wallaceit.onguard.actions." + cmdParts[0]);
-                Method method = actionClass.getMethod(cmdParts[1], Context.class);
-                method.invoke(null, context);
+                Method method = actionClass.getMethod(cmdParts[1], Context.class, GeofenceItem.class, boolean.class);
+                method.invoke(null, context, item, in);
             } catch (Exception e) {
                 e.printStackTrace();
             }

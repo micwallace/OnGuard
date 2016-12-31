@@ -24,7 +24,7 @@ import android.content.SharedPreferences;
 import java.util.HashSet;
 import java.util.Set;
 
-class GeofenceItem {
+public class GeofenceItem {
 
     private SharedPreferences prefs;
 
@@ -143,6 +143,7 @@ class GeofenceItem {
         editor.putInt("geofence_radius_"+key, radius);
         editor.putStringSet("geofence_incommands_"+key, inCommands);
         editor.putStringSet("geofence_outcommands_"+key, outCommands);
+        editor.putInt("geofence_state_"+key, state);
         editor.apply();
 
         return key;
@@ -163,6 +164,7 @@ class GeofenceItem {
         editor.remove("geofence_radius_"+key);
         editor.remove("geofence_incommands_"+key);
         editor.remove("geofence_outcommands_"+key);
+        editor.remove("geofence_state_"+key);
         editor.apply();
     }
 }
