@@ -30,12 +30,10 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.annotation.processing.AbstractProcessor;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import javax.tools.JavaFileObject;
 
-@SupportedAnnotationTypes("au.com.wallaceit.onguard.processor.GeofenceActionPlugin")
+@SupportedAnnotationTypes("au.com.wallaceit.onguard.processor.GeofenceAction")
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class ActionAnnotationProcessor extends AbstractProcessor {
     @Override
@@ -48,7 +46,10 @@ public class ActionAnnotationProcessor extends AbstractProcessor {
 
 
         // for each javax.lang.model.element.Element annotated with the CustomAnnotation
-        for (Element element : roundEnv.getElementsAnnotatedWith(GeofenceActionPlugin.class)) {
+        for (Element element : roundEnv.getElementsAnnotatedWith(GeofenceAction.class)) {
+            if (element.getSimpleName().toString().equals("GeofenceActionPlugin"))
+                continue;
+
             String objectType = element.getSimpleName().toString();
             // this is appending to the return statement
             builder.append("\t\t").append(objectType).append(".class,\n");

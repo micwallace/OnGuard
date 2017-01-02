@@ -1,4 +1,4 @@
-package au.com.wallaceit.onguard.actions;
+package au.com.wallaceit.onguard;
 
 /*
  * Copyright 2016 Michael Boyde Wallace (http://wallaceit.com.au)
@@ -20,28 +20,12 @@ package au.com.wallaceit.onguard.actions;
  * Created by michael on 28/12/16.
  */
 
-import android.app.Activity;
 import android.content.Context;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 
-import au.com.wallaceit.onguard.GeofenceItem;
+import au.com.wallaceit.onguard.actions.ActionsList;
 
-public abstract class GeofenceAction {
-
-    /*public static LinkedHashMap<String, String> getActions(){
-        LinkedHashMap<String, String> actions = new LinkedHashMap<>();
-        actions.put("Wifi::On", "Turn Wifi On");
-        actions.put("Wifi::Off", "Turn Wifi Off");
-
-        actions.put("Notification::Silent", "Notification: Silent");
-        actions.put("Notification::Vibrate", "Notification: Vibrate");
-        actions.put("Notification::Sound", "Notification: Sound");
-        actions.put("Notification::SoundVibrate", "Notification: Sound & Vibrate");
-        return actions;
-    }*/
+class GeofenceActions {
 
     private static LinkedHashMap<String, String> actionsList = null;
 
@@ -50,24 +34,26 @@ public abstract class GeofenceAction {
             return actionsList;
 
         LinkedHashMap<String, String> actions = new LinkedHashMap<>();
-        Class[] pluginClasses = ActionsList.CLASSES;
-        for (Class pluginClass : pluginClasses){
+        Class[] actionClasses = ActionsList.CLASSES;
+        for (Class actionClass : actionClasses){
+            if (!GeofenceActionPlugin.class.isAssignableFrom(actionClass))
+                continue;
             try {
-                Method method = pluginClass.getMethod("getActions");
-                LinkedHashMap<String,String> result = (LinkedHashMap<String, String>) method.invoke(null);
+                GeofenceActionPlugin actionPlugin = GeofenceActionPlugin.class.cast(actionClass.newInstance());
+                LinkedHashMap<String,String> result = actionPlugin.getActions();
                 if (result!=null)
                     actions.putAll(result);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        System.out.println("FOUND ACTIONS: "+actions.size());
+        //System.out.println("FOUND ACTIONS: "+actions.size());
         actionsList = actions;
 
         return actions;
     }
 
-    public static void performGeofenceCommands(Context context, GeofenceItem item, boolean in){
+    static void performGeofenceCommands(Context context, GeofenceItem item, boolean in){
         for (String command : (in ? item.getInCommands() : item.getOutCommands())) {
             if (command.equals(""))
                 continue;
@@ -75,14 +61,14 @@ public abstract class GeofenceAction {
             String[] cmdParts = command.split("::");
             try {
                 Class<?> actionClass = Class.forName("au.com.wallaceit.onguard.actions." + cmdParts[0]);
-                Method method = actionClass.getMethod(cmdParts[1], Context.class, GeofenceItem.class, boolean.class);
-                method.invoke(null, context, item, in);
+                if (!GeofenceActionPlugin.class.isAssignableFrom(actionClass))
+                    continue;
+                GeofenceActionPlugin actionPlugin = GeofenceActionPlugin.class.cast(actionClass.newInstance());
+                actionPlugin.handleCommand(context, item, new String[]{cmdParts[1]}, in);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-
-    public abstract void requestPermission(Activity activity);
-    public abstract void checkPermission(Context context);
 }

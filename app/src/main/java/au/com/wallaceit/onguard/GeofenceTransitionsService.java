@@ -20,19 +20,12 @@ package au.com.wallaceit.onguard;
  */
 
 import android.app.IntentService;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingEvent;
-
-import java.util.Set;
-
-import au.com.wallaceit.onguard.actions.GeofenceAction;
 
 public class GeofenceTransitionsService extends IntentService {
 
@@ -76,7 +69,7 @@ public class GeofenceTransitionsService extends IntentService {
             item.setState(event.getGeofenceTransition());
             item.save();
 
-            GeofenceAction.performGeofenceCommands(GeofenceTransitionsService.this, item, event.getGeofenceTransition() == Geofence.GEOFENCE_TRANSITION_ENTER);
+            GeofenceActions.performGeofenceCommands(GeofenceTransitionsService.this, item, event.getGeofenceTransition() == Geofence.GEOFENCE_TRANSITION_ENTER);
         }
     }
 }

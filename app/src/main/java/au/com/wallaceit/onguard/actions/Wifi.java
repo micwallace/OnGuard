@@ -26,29 +26,31 @@ import android.net.wifi.WifiManager;
 
 import java.util.LinkedHashMap;
 
+import au.com.wallaceit.onguard.GeofenceActionPlugin;
 import au.com.wallaceit.onguard.GeofenceItem;
-import au.com.wallaceit.onguard.processor.GeofenceActionPlugin;
 
-@GeofenceActionPlugin
-public class Wifi extends GeofenceAction {
+public class Wifi extends GeofenceActionPlugin {
 
-    public static LinkedHashMap<String, String> getActions(){
+    public LinkedHashMap<String, String> getActions(){
         LinkedHashMap<String, String> actions = new LinkedHashMap<>();
         actions.put("Wifi::On", "Turn Wifi On");
         actions.put("Wifi::Off", "Turn Wifi Off");
         return actions;
     }
 
-    public static void On(Context context, GeofenceItem item, boolean in){
-        System.out.println("Turning WIFI on!");
+    @Override
+    public void handleCommand(Context context, GeofenceItem item, String[] command, boolean inGeofence) {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        wifiManager.setWifiEnabled(true);
-    }
-
-    public static void Off(Context context, GeofenceItem item, boolean in){
-        System.out.println("Turning WIFI off!");
-        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        wifiManager.setWifiEnabled(false);
+        switch (command[0]){
+            case "On":
+                wifiManager.setWifiEnabled(true);
+                System.out.println("Turning WIFI on!");
+                break;
+            case "Off":
+                wifiManager.setWifiEnabled(false);
+                System.out.println("Turning WIFI off!");
+                break;
+        }
     }
 
     @Override

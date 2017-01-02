@@ -37,11 +37,9 @@ dependencies {
     compile 'com.android.support:support-v4:25.1.0'
     compile 'com.android.support:support-vector-drawable:25.1.0'
     compile 'com.github.prsidhu:MultiSelectSpinner:master-SNAPSHOT'
-
     compile files('libs/processor.jar')
 
     testCompile 'junit:junit:4.12'
-    //compile project(path: ':processor')
 }
 
 task processorTask(type: Exec) {

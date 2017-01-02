@@ -34,8 +34,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
-import au.com.wallaceit.onguard.actions.GeofenceAction;
-
 public class GeofenceSettingsActivity extends AppCompatActivity {
 
     Onguard app;
@@ -72,7 +70,7 @@ public class GeofenceSettingsActivity extends AppCompatActivity {
             }
         });
 
-        actionsMap = GeofenceAction.getActions();
+        actionsMap = GeofenceActions.getActions();
 
         final ArrayList<String> actionKeys = new ArrayList<>(actionsMap.keySet());
         ArrayList<String> actionLabels = new ArrayList<>(actionsMap.values());
@@ -128,14 +126,14 @@ public class GeofenceSettingsActivity extends AppCompatActivity {
         findViewById(R.id.enter_action_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GeofenceAction.performGeofenceCommands(GeofenceSettingsActivity.this, item, true);
+                GeofenceActions.performGeofenceCommands(GeofenceSettingsActivity.this, item, true);
             }
         });
 
         findViewById(R.id.exit_action_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GeofenceAction.performGeofenceCommands(GeofenceSettingsActivity.this, item, false);
+                GeofenceActions.performGeofenceCommands(GeofenceSettingsActivity.this, item, false);
             }
         });
     }

@@ -42,7 +42,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -106,7 +105,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 item.setLatitude(selMarker.getPosition().latitude);
                 String nkey = item.save();
 
-                ((Onguard) getApplication()).setGeofenceIntent(mGoogleApiClient, item.getKey());
+                ((Onguard) getApplication()).setGeofenceIntent(mGoogleApiClient, item);
 
                 if (key==null){
                     Intent intent = new Intent(MapActivity.this, GeofenceSettingsActivity.class);
@@ -200,7 +199,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         if (requestCode==1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             onConnected(null);
             return;

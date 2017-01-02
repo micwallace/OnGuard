@@ -69,18 +69,16 @@ public class Onguard extends Application implements ResultCallback<Status> {
         return new GeofenceItem(prefs, key);
     }
 
-    public void setGeofenceIntent(GoogleApiClient googleApiClient, String key){
+    public void setGeofenceIntent(GoogleApiClient googleApiClient, GeofenceItem item){
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
 
-        GeofenceItem item = getGeofenceItem(key);
-
         Geofence.Builder geobuilder = new Geofence.Builder()
-            .setRequestId(key)
+            .setRequestId(item.getKey())
             .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .setNotificationResponsiveness(20)
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | GeofencingRequest.INITIAL_TRIGGER_EXIT)
+            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
             .setCircularRegion(item.getLatitude(), item.getLongitude(), item.getRadius());
 
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder()
@@ -90,7 +88,7 @@ public class Onguard extends Application implements ResultCallback<Status> {
         LocationServices.GeofencingApi.addGeofences(
                 googleApiClient,
                 builder.build(),
-                getGeofencePendingIntent(key)
+                getGeofencePendingIntent(item.getKey())
         ).setResultCallback(this);
 
         /*try {

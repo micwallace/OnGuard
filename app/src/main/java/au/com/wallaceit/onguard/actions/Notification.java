@@ -29,14 +29,13 @@ import android.support.v4.app.NotificationCompat;
 
 import java.util.LinkedHashMap;
 
+import au.com.wallaceit.onguard.GeofenceActionPlugin;
 import au.com.wallaceit.onguard.GeofenceItem;
 import au.com.wallaceit.onguard.R;
-import au.com.wallaceit.onguard.processor.GeofenceActionPlugin;
 
-@GeofenceActionPlugin
-public class Notification extends GeofenceAction {
+public class Notification extends GeofenceActionPlugin {
 
-    public static LinkedHashMap<String, String> getActions(){
+    public LinkedHashMap<String, String> getActions(){
         LinkedHashMap<String, String> actions = new LinkedHashMap<>();
         actions.put("Notification::Silent", "Notification: Silent");
         actions.put("Notification::Vibrate", "Notification: Vibrate");
@@ -45,24 +44,26 @@ public class Notification extends GeofenceAction {
         return actions;
     }
 
-    public static void Silent(Context context, GeofenceItem item, boolean in){
-        System.out.println("Notification: Silent");
-        createNotification(context, item, in, false, false);
-    }
-
-    public static void Vibrate(Context context, GeofenceItem item, boolean in){
-        System.out.println("Notification: Vibrate");
-        createNotification(context, item, in, true, false);
-    }
-
-    public static void Sound(Context context, GeofenceItem item, boolean in){
-        System.out.println("Notification: Sound");
-        createNotification(context, item, in, false, true);
-    }
-
-    public static void SoundVibrate(Context context, GeofenceItem item, boolean in){
-        System.out.println("Notification: Sound & Vibrate");
-        createNotification(context, item, in, true, true);
+    @Override
+    public void handleCommand(Context context, GeofenceItem item, String[] command, boolean inGeofence) {
+        switch (command[0]){
+            case "Silent":
+                System.out.println("Notification: Silent");
+                createNotification(context, item, inGeofence, false, false);
+                break;
+            case "Vibrate":
+                System.out.println("Notification: Vibrate");
+                createNotification(context, item, inGeofence, true, false);
+                break;
+            case "Sound":
+                System.out.println("Notification: Sound");
+                createNotification(context, item, inGeofence, false, true);
+                break;
+            case "SoundVibrate":
+                System.out.println("Notification: Sound & Vibrate");
+                createNotification(context, item, inGeofence, true, true);
+                break;
+        }
     }
 
     private static void createNotification(Context context, GeofenceItem item, boolean in, boolean vibrate, boolean sound){
